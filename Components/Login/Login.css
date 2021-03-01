@@ -1,0 +1,65 @@
+.login-canvas
+{
+    background-image:url('/background.jpeg');
+    background-repeat:no-repeat;
+    /* background-attachment: fixed; */
+    background-size: cover;
+    background-position: center;
+    /* Full height */
+    height: 100%; 
+    /* background-color:#cccccc; */
+    position: relative;
+}
+
+.login-panel
+{
+    width: 24rem;
+    height: 26rem;
+    margin-top: -13rem;
+    margin-left: -12rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 0.4rem 1.4rem;
+}
+
+
+.login-form
+{
+    margin-top: 4rem;
+}
+
+.register-form
+{
+    margin-top: 2rem;
+}
+
+.login-form-input
+{
+    font-size: small;
+    font-weight: bold;
+    margin:0.1rem 0 0 0;
+}
+
+.login-form-wrap
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 70%;
+    margin:4rem auto;
+}
+
+.register-submit
+{
+    margin: 1rem auto;
+    width: 70%;
+}
+
+.login-form-type {
+    height: 25x;
+    font-size: 12px;
+    line-height: 25px;
+}
+
+
