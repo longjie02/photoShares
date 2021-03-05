@@ -20,7 +20,7 @@ class RegisterLogin extends React.Component {
             register_confirmpassword: ''
         };
 
-        this.handleLogin = this.handleLogin.bind(this);
+        // this.handleLogin = this.handleLogin.bind(this);
         this.handleSwitch = this.handleSwitch.bind(this);
     }
 
@@ -33,7 +33,7 @@ class RegisterLogin extends React.Component {
     handleLogin = (event) => {
         event.preventDefault();
         axios
-            .post('/admin/signin', {
+            .post('/admin/login', {
                 email: this.state.login_email,
                 password: this.state.login_password
             })

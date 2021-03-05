@@ -24,18 +24,55 @@ app.use(
     secret: "secretKey",
     resave: false,
     saveUninitialized: true,
-    user_id: undefined,
+    _id: undefined,
     store: new MongoStore({ mongooseConnection: mongoose.connection })
   })
 );
 app.use(bodyParser.json());
 
+
 app.get("/", function (request, response) {
   response.send("Simple web server of files from " + __dirname);
 });
 
+// API: auto login
+app.get("/admin/current", function(request, response) {
+  let _id = request.session._id;
+  if (!_id) {
+    console.log("This is a new connection!");
+    response.status(200).send(undefined);
+    return;
+  }
+  User.findOne({ _id: _id }, (_, user) => {
+    if (!user) {
+      console.log("id not exists.");
+      response.status(400).send("You have not registered.");
+      return;
+    }
 
-/** function: process register request */
+    response.status(200).send(JSON.stringify(user));
+  });
+});
+
+// API: login
+app.post('/admin/login', async (request, response) => {
+  try {
+    let user = await User.findOne({email: request.body.email});
+    if (!user) {
+      response.status(400).send('This account has not been created.');
+      return;
+    }
+    if (user.password !== request.body.password) {
+      response.status(400).send('your password not matches email address');
+      return;
+    }
+    request.session._id = user._id;
+    response.status(200).send(JSON.stringify(user));
+  } catch (err) {
+    console.log(err);
+  }
+});
+/** API: process register request */
 app.post('/admin/register', async (request, response) => {
   let {
     nickname,
@@ -83,6 +120,17 @@ app.post('/admin/register', async (request, response) => {
     console.log(err);
     response.status(500).send("account cannot be created");
   }
+});
+
+app.post("/admin/logout", function(request, response) {
+  request.session.destroy(function(err) {
+    if (err) {
+      console.log(err);
+      response.status(400).send("sorry! unable to logout");
+      return;
+    }
+    response.status(200).send();
+  });
 });
 
 

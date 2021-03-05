@@ -1,0 +1,21 @@
+.topbar-upload-submitwrapper
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* width: 70%; */
+    /* margin:4rem auto; */
+}
+
+
+#topbar-upload-previewholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#topbar-upload-previewholder img {
+    max-height: 25rem;
+    max-width: 35rem;
+}
+

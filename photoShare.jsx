@@ -16,8 +16,8 @@ class PhotoApp extends React.Component {
             current_user: undefined // auto login
         }
 
-        // axios.get('/admin/current').then(res => { changeUser(res.data) })
-        //     .catch((err) => { this.setState({ current_user: undefined }) }); // session, take back user info
+        axios.get('/admin/current').then(res => { this.changeUser(res.data) })
+            .catch((err) => { this.changeUser(undefined) }); // session, take back user info
 
     }
 
@@ -32,8 +32,8 @@ class PhotoApp extends React.Component {
         return (
             <HashRouter>
                 <Switch>
-                    {this.state.current_user ? <Route component={Panel} /> : <Route path='/login-register' render={() => <Login changeUser={this.changeUser} />} />}
-                    {this.state.current_user ? <Route component={Panel} /> : <Redirect to='/login-register' />}
+                    {this.state.current_user ? <Route render={props => <Panel changeUser={this.changeUser} />} /> : <Route path='/login-register' render={() => <Login changeUser={this.changeUser} />} />}
+                    {this.state.current_user ? <Route render={props => <Panel changeUser={this.changeUser} />} /> : <Redirect to='/login-register' />}
                 </Switch>
             </HashRouter>
         )
