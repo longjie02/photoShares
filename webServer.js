@@ -1,10 +1,21 @@
 "use strict";
 
 var fs = require("fs");
+var bodyParser = require("body-parser");
+
+var multer = require('multer');
+const diskStorage = multer.diskStorage({
+  destination: 'images/',
+  filename: (req, file, cb) => {
+    let fileFormat = file.originalname.split(".");
+    cb(null, fileFormat[0].substring(0,5) + Date.now() + "." + fileFormat[fileFormat.length-1]);
+  }
+})
+var uploadHelper = multer({storage: diskStorage}).single('photo');
+
 var mongoose = require("mongoose");
 mongoose.Promise = require('bluebird');
 var User = require("./schema/user.js");
-var bodyParser = require("body-parser");
 
 const session = require("express-session");
 var MongoStore = require('connect-mongo')(session);
@@ -12,6 +23,15 @@ var MongoStore = require('connect-mongo')(session);
 var express = require("express");
 var app = express();
 
+// middleware: login check
+var loginCheck = (req, res, next) => {
+  if (!req.session._id) {
+    res.status(400).send('Please log in.');
+    return;
+  }
+  console.log("login check is valid.");
+  next();
+}
 
 mongoose.connect("mongodb://localhost/cs142project", {
   useNewUrlParser: true,
@@ -122,6 +142,7 @@ app.post('/admin/register', async (request, response) => {
   }
 });
 
+// API: logout
 app.post("/admin/logout", function(request, response) {
   request.session.destroy(function(err) {
     if (err) {
@@ -133,7 +154,7 @@ app.post("/admin/logout", function(request, response) {
   });
 });
 
-app.post("/photos/new", (request, response) => {
+app.post("/photos/new", loginCheck, uploadHelper, (request, response) => {
   response.status(200).send();
 })
 
