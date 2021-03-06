@@ -8,14 +8,15 @@ const diskStorage = multer.diskStorage({
   destination: 'images/',
   filename: (req, file, cb) => {
     let fileFormat = file.originalname.split(".");
-    cb(null, fileFormat[0].substring(0,5) + Date.now() + "." + fileFormat[fileFormat.length-1]);
+    cb(null, fileFormat[0].substring(0, 5) + Date.now() + "." + fileFormat[fileFormat.length - 1]);
   }
 })
-var uploadHelper = multer({storage: diskStorage}).single('photo');
+var uploadHelper = multer({ storage: diskStorage }).single('photo');
 
 var mongoose = require("mongoose");
 mongoose.Promise = require('bluebird');
 var User = require("./schema/user.js");
+var Photo = require("./schema/photo");
 
 const session = require("express-session");
 var MongoStore = require('connect-mongo')(session);
@@ -56,7 +57,7 @@ app.get("/", function (request, response) {
 });
 
 // API: auto login
-app.get("/admin/current", function(request, response) {
+app.get("/admin/current", function (request, response) {
   let _id = request.session._id;
   if (!_id) {
     console.log("This is a new connection!");
@@ -77,7 +78,7 @@ app.get("/admin/current", function(request, response) {
 // API: login
 app.post('/admin/login', async (request, response) => {
   try {
-    let user = await User.findOne({email: request.body.email});
+    let user = await User.findOne({ email: request.body.email });
     if (!user) {
       response.status(400).send('This account has not been created.');
       return;
@@ -143,8 +144,8 @@ app.post('/admin/register', async (request, response) => {
 });
 
 // API: logout
-app.post("/admin/logout", function(request, response) {
-  request.session.destroy(function(err) {
+app.post("/admin/logout", (request, response) => {
+  request.session.destroy(function (err) {
     if (err) {
       console.log(err);
       response.status(400).send("sorry! unable to logout");
@@ -154,8 +155,20 @@ app.post("/admin/logout", function(request, response) {
   });
 });
 
-app.post("/photos/new", loginCheck, uploadHelper, (request, response) => {
-  response.status(200).send();
+// API: save photo to /images/; update db
+app.post("/photos/new", loginCheck, uploadHelper, async (request, response) => {
+  try {
+    let newPhoto = {
+      file_name: request.file.filename,
+      creator_id: request.session._id,
+      description: request.body.description
+    };
+    await Photo.create(newPhoto);
+    response.status(200).send("sucessful upload.");
+  } catch (e) {
+    console.log(e);
+    response.status(500).send("Unknown error.");
+  }
 })
 
 var server = app.listen(3000, function () {
