@@ -15,8 +15,8 @@ class TopBar extends React.Component {
 
     handleStateChange = stateUpdate => this.setState(stateUpdate);
 
-    setShowUploadDiaglog = (val) => {
-        this.setState({ 
+    setShowUploadDiaglog = (val, event) => {
+        this.setState({
             showUploadDialog: val,
             uploadPhotoDescription: ''
         });
@@ -35,18 +35,15 @@ class TopBar extends React.Component {
         domForm.append("photo", photo);
         domForm.append("description", this.state.uploadPhotoDescription);
 
-        // axios({
-        //     url: '/photo/new',
-        //     method: 'post',
-        //     data: domForm
-        // }).then((response) => {
-        //         this.setState({
-        //             showUploadDialog: false,
-        //         });
-        //         if(this.props.middleFunc) this.props.middleFunc();
-        //     })
-        //     .catch(err => this.handleStateChange({upload_err: err.response.data}));
-
+        axios
+            .post("/photos/new", domForm)
+            .then(() => {
+                console.log("upload successes");
+                this.setState({
+                    showUploadDialog: false,
+                });
+            })
+            .catch(err => console.log("photo upload err: " + err));
     }
 
     handleLogout = () => {
@@ -80,7 +77,7 @@ class TopBar extends React.Component {
                 <Navbar.Brand href="#home">
                     <img
                         alt="logo"
-                        src="/images/nPnsV.png"
+                        src="favicon.ico"
                         width="30"
                         height="30"
                         className="d-inline-block align-top"
@@ -101,11 +98,11 @@ class TopBar extends React.Component {
                         <NavDropdown.Divider />
                         <NavDropdown.Item id="topbar-logout" onClick={this.handleLogout}>Log out</NavDropdown.Item>
                     </NavDropdown>
-                    <Button onClick={() => this.setShowUploadDiaglog(true)}>upload photo</Button>
+                    <Button onClick={(e) => this.setShowUploadDiaglog(true, e)}>upload photo</Button>
                     <Modal
                         size="lg"
                         show={this.state.showUploadDialog}
-                        onHide={() => this.setShowUploadDiaglog(false)}
+                        onHide={(e) => this.setShowUploadDiaglog(false, e)}
                     >
                         <Modal.Header closeButton >
                             {/* <Modal.Title id="example-modal-sizes-title-lg">

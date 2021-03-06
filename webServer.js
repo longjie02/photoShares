@@ -133,6 +133,9 @@ app.post("/admin/logout", function(request, response) {
   });
 });
 
+app.post("/photos/new", (request, response) => {
+  response.status(200).send();
+})
 
 var server = app.listen(3000, function () {
   var port = server.address().port;
