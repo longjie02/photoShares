@@ -10,30 +10,30 @@ import Login from './Components/Login/Login';
 import Panel from './Components/Panel/Panel';
 
 class PhotoApp extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
-            current_user: undefined // auto login
+            user: undefined // auto login
         }
-
-        axios.get('/admin/current').then(res => { this.changeUser(res.data) })
+        axios.get('/admin/current').then(res => { this.changeUser(res.data);})
             .catch((err) => { this.changeUser(undefined) }); // session, take back user info
 
     }
 
-    // method not need to 'var'
     changeUser = (user) => {
-        this.setState({ current_user: user });
-        console.log(this.state.current_user);
+        this.setState({ user: user });
     };
 
     render() {
-        let Page = this.state.current_user ? Panel : Login;
+        let Page = this.state.user ? Panel : Login;
         return (
+    
             <HashRouter>
                 <Switch>
-                    {this.state.current_user ? <Route render={props => <Panel changeUser={this.changeUser} />} /> : <Route path='/login-register' render={() => <Login changeUser={this.changeUser} />} />}
-                    {this.state.current_user ? <Route render={props => <Panel changeUser={this.changeUser} />} /> : <Redirect to='/login-register' />}
+                    {this.state.user ? <Route render={props => <Panel user={this.state.user} changeUser={this.changeUser} />} /> : <Route path='/login-register' render={() => <Login changeUser={this.changeUser} />} />}
+                    {!this.state.user && <Redirect to='/login-register' />}
+                    {/* {this.state.user ? <Route render={props => <Panel user={this.state.user} changeUser={this.changeUser} />} /> : <Redirect to='/login-register' />} */}
                 </Switch>
             </HashRouter>
         )

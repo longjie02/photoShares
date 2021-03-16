@@ -63,9 +63,9 @@ class RegisterLogin extends React.Component {
                 password: this.state.register_password,
             })
             .then(response => {
-                let current_user = response.data;
-                this.props.changeUser(current_user);
-                console.log(current_user);
+                let user = response.data;
+                this.props.changeUser(user);
+                console.log(user);
                 // window.location.href = `#/forum`;
             })
             .catch(err => {
