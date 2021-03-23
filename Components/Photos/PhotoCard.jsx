@@ -5,7 +5,6 @@ import { } from "react-bootstrap-icons";
 
 function LikeButton(props) {
     const [isLike, setIsLike] = useState(props.isLike);
-    // [likeCount, setLikeCount] = useState(props.likeCount);
     function handleToggleLike() {
         axios
             .post(`/toggleLike/${props.photoId}`, { like: !isLike })
@@ -55,7 +54,7 @@ class PhotoCard extends React.Component {
                     <FavoriteButton isFavorite={this.props.isFavorite} photoId={this.props._id}
                         refreshPhotoList={this.props.refreshPhotoList}
                     />
-                    <Button>Download</Button>
+                    <Button>Comment</Button>
                 </ButtonGroup>
                 <Card.Body>
                     <Card.Text>

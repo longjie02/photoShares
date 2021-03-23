@@ -83,68 +83,67 @@ class TopBar extends React.Component {
                         className="d-inline-block align-top"
                     />
                 </Navbar.Brand>
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                    </Nav>
-                    {/* <Form inline>
-                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                        <Button variant="outline-success">Search</Button>
-                    </Form> */}
-                    <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                        {/* <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item> */}
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item id="topbar-logout" onClick={this.handleLogout}>Log out</NavDropdown.Item>
-                    </NavDropdown>
-                    <Button onClick={(e) => this.setShowUploadDiaglog(true, e)}>upload photo</Button>
-                    <Modal
-                        size="lg"
-                        show={this.state.showUploadDialog}
-                        onHide={(e) => this.setShowUploadDiaglog(false, e)}
-                    >
-                        <Modal.Header closeButton >
-                            {/* <Modal.Title id="example-modal-sizes-title-lg">
+                <Nav defaultActiveKey="#/square" variant="pills" className="mr-auto">
+                    <Nav.Item>
+                        <Nav.Link href={`#/square`}>Square</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link href={`#/photos/${this.props.user._id}`}>My photos</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link href={`#/favorites`}>Favorites</Nav.Link>
+                    </Nav.Item>
+                </Nav>
+                <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item id="topbar-logout" onClick={this.handleLogout}>Log out</NavDropdown.Item>
+                </NavDropdown>
+                <Button onClick={(e) => this.setShowUploadDiaglog(true, e)}>upload photo</Button>
+                <Modal
+                    size="lg"
+                    show={this.state.showUploadDialog}
+                    onHide={(e) => this.setShowUploadDiaglog(false, e)}
+                >
+                    <Modal.Header closeButton >
+                        {/* <Modal.Title id="example-modal-sizes-title-lg">
                                 Share your story
                             </Modal.Title> */}
-                        </Modal.Header>
-                        <Modal.Body>
-                            <div id="topbar-upload-previewholder">
-                                <img id="topbar-upload-preview" />
-                            </div>
-                            <form
-                                id="topbar-upload-form"
-                                onSubmit={this.handleUploadSubmit}>
-                                <FormGroup>
-                                    <FormLabel>Description:</FormLabel>
-                                    <FormControl
-                                        as="textarea"
-                                        row="4"
-                                        value={this.state.uploadPhotoDescription}
-                                        onChange={(event) => this.handleStateChange({ uploadPhotoDescription: event.target.value })}
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div id="topbar-upload-previewholder">
+                            <img id="topbar-upload-preview" />
+                        </div>
+                        <form
+                            id="topbar-upload-form"
+                            onSubmit={this.handleUploadSubmit}>
+                            <FormGroup>
+                                <FormLabel>Description:</FormLabel>
+                                <FormControl
+                                    as="textarea"
+                                    row="4"
+                                    value={this.state.uploadPhotoDescription}
+                                    onChange={(event) => this.handleStateChange({ uploadPhotoDescription: event.target.value })}
+                                />
+                            </FormGroup>
+                            <Alert variant="danger" className="errormessage" show={this.state.upload_err ? true : false}>{this.state.upload_err}</Alert>
+                            <div className="topbar-upload-submitwrapper">
+                                <FormLabel>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        id="topbar-upload-form-input"
+                                        onChange={this.handleShowPreview}
+                                        ref={domFileRef => {
+                                            this.uploadInput = domFileRef;
+                                        }}
                                     />
-                                </FormGroup>
-                                <Alert variant="danger" className="errormessage" show={this.state.upload_err ? true : false}>{this.state.upload_err}</Alert>
-                                <div className="topbar-upload-submitwrapper">
-                                    <FormLabel>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            id="topbar-upload-form-input"
-                                            onChange={this.handleShowPreview}
-                                            ref={domFileRef => {
-                                                this.uploadInput = domFileRef;
-                                            }}
-                                        />
-                                    </FormLabel>
-                                    <Button color="primary" type="submit">Post</Button>
-                                </div>
-                            </form>
-                        </Modal.Body>
-                    </Modal>
-                </Navbar.Collapse>
-            </Navbar>
+                                </FormLabel>
+                                <Button color="primary" type="submit">Post</Button>
+                            </div>
+                        </form>
+                    </Modal.Body>
+                </Modal>
+            </Navbar >
         );
     }
 }
