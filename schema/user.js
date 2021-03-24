@@ -7,7 +7,7 @@ var userSchema = new mongoose.Schema({
     // first_name: String, 
     // last_name: String,  
     // location: String,
-    nickname: String,
+    nickName: String,
     email: String,
     password: String,
      
@@ -17,7 +17,7 @@ var userSchema = new mongoose.Schema({
     // occupation: String,    // Occupation of the user.
     mentioned: [mongoose.Schema.Types.ObjectId], //array of photo ids 
     favorites: [mongoose.Schema.Types.ObjectId], //array of photo ids
-    followList: [mongoose.Schema.Types.ObjectId] // array of user ids
+    subs: [mongoose.Schema.Types.ObjectId] // array of user ids
 });
 
 var User = mongoose.model('User', userSchema);

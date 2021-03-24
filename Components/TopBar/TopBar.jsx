@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, NavDropdown, Nav, Form, FormControl, Button, Modal, FormLabel, FormGroup, Alert } from "react-bootstrap";
+import { Navbar, NavDropdown, Nav, FormControl, Button, Modal, FormLabel, FormGroup, Alert } from "react-bootstrap";
 import axios from 'axios';
 import './TopBar.css';
 
@@ -8,27 +8,25 @@ class TopBar extends React.Component {
         super(props);
         this.state = {
             showUploadDialog: false,
-            upload_err: '',
+            uploadErr: '',
             uploadPhotoDescription: ""
         }
     }
 
-    handleStateChange = stateUpdate => this.setState(stateUpdate);
-
-    setShowUploadDiaglog = (val, event) => {
+    setShowUploadDiaglog = val => {
         this.setState({
             showUploadDialog: val,
             uploadPhotoDescription: ''
         });
     }
 
-    handleUploadSubmit = (event) => {
+    handleUploadSubmit = event => {
         event.preventDefault();
 
         const domForm = new FormData();
         let photo = this.uploadInput.files[0];
         if (!photo) {
-            this.handleStateChange({ upload_err: "you have not chosen a photo." });
+            this.handleStateChange({ uploadErr: "you have not chosen a photo." });
             return;
         }
 
@@ -55,7 +53,7 @@ class TopBar extends React.Component {
             .catch(err => console.log(err))
     }
 
-    handleShowPreview = (event) => {
+    handleShowPreview = event => {
         let preview = document.getElementById("topbar-upload-preview");
         let fileInput = event.target;
         let reader = new FileReader();
@@ -74,7 +72,7 @@ class TopBar extends React.Component {
     render() {
         return (
             <Navbar bg="dark" variant="dark" fixed='top'>
-                <Navbar.Brand href="#home">
+                <Navbar.Brand href="#/square">
                     <img
                         alt="logo"
                         src="favicon.ico"
@@ -122,10 +120,10 @@ class TopBar extends React.Component {
                                     as="textarea"
                                     row="4"
                                     value={this.state.uploadPhotoDescription}
-                                    onChange={(event) => this.handleStateChange({ uploadPhotoDescription: event.target.value })}
+                                    onChange={event => this.setState({ uploadPhotoDescription: event.target.value })}
                                 />
                             </FormGroup>
-                            <Alert variant="danger" className="errormessage" show={this.state.upload_err ? true : false}>{this.state.upload_err}</Alert>
+                            <Alert variant="danger" className="errormessage" show={this.state.uploadErr ? true : false}>{this.state.uploadErr}</Alert>
                             <div className="topbar-upload-submitwrapper">
                                 <FormLabel>
                                     <input

@@ -8,19 +8,18 @@ class RegisterLogin extends React.Component {
         super(props);
         this.state = {
             task: 'login',
-            login_err: '',
-            register_err: '',
+            loginErr: '',
+            registerErr: '',
 
-            login_email: '',
-            login_password: '',
+            loginEmail: '',
+            loginPassword: '',
 
-            register_nickname: '',
-            register_email: '',
-            register_password: '',
-            register_confirmpassword: ''
+            registerNickName: '',
+            registerEmail: '',
+            registerPassword: '',
+            registerConfirmedPassword: ''
         };
 
-        // this.handleLogin = this.handleLogin.bind(this);
         this.handleSwitch = this.handleSwitch.bind(this);
     }
 
@@ -34,43 +33,42 @@ class RegisterLogin extends React.Component {
         event.preventDefault();
         axios
             .post('/admin/login', {
-                email: this.state.login_email,
-                password: this.state.login_password
+                loginEmail: this.state.loginEmail,
+                loginPassword: this.state.loginPassword
             })
-            .then(response => {
-                this.props.changeUser(response.data);
-                // window.location.href = `#/forum`;
+            .then(res => {
+                this.props.changeUser(res.data);
             })
             .catch(err => {
                 this.setState({
-                    login_err: 'Incorrect login name or password, Please try again.'
+                    loginErr: 'Incorrect login name or password, Please try again.'
                 });
                 console.error('fetchModel error: ', err.response.data);
             });
     }
 
     handleRegister = (event) => {
-        if (this.state.register_password !== this.state.register_confirmpassword) {
-            this.setState({ register_err: 'Your passwords must match.' });
+        if (this.state.registerPassword !== this.state.registerConfirmedPassword) {
+            this.setState({ registerErr: 'Your passwords must match.' });
             return;
         }
 
         event.preventDefault();
         axios
             .post("/admin/register", {
-                nickname: this.state.register_nickname,
-                email: this.state.register_email,
-                password: this.state.register_password,
+                registerNickName: this.state.registerNickName,
+                registerEmail: this.state.registerEmail,
+                registerPassword: this.state.registerPassword,
             })
-            .then(response => {
-                let user = response.data;
+            .then(res => {
+                let user = res.data;
                 this.props.changeUser(user);
                 console.log(user);
                 // window.location.href = `#/forum`;
             })
             .catch(err => {
                 console.log(err);
-                this.setState({ register_err: err.response.data });
+                this.setState({ registerErr: err.response.data });
             })
     }
 
@@ -89,8 +87,8 @@ class RegisterLogin extends React.Component {
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control
                                     type="email"
-                                    value={this.state.login_email}
-                                    onChange={event => this.handleStateChange({ login_email: event.target.value })}
+                                    value={this.state.loginEmail}
+                                    onChange={event => this.handleStateChange({ loginEmail: event.target.value })}
                                 />
                             </Form.Group>
 
@@ -98,15 +96,14 @@ class RegisterLogin extends React.Component {
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control
                                     type="password"
-                                    value={this.state.login_password}
-                                    onChange={event => this.handleStateChange({ login_password: event.target.value })}
+                                    value={this.state.loginPassword}
+                                    onChange={event => this.handleStateChange({ loginPassword: event.target.value })}
                                 />
                             </Form.Group>
-                            <Alert variant="danger" className="errormessage" show={this.state.login_err ? true : false}>{this.state.login_err}</Alert>
+                            <Alert variant="danger" className="errormessage" show={this.state.loginErr ? true : false}>{this.state.loginErr}</Alert>
 
                             <div className="login-form-wrap">
                                 <Button className="login-submit" variant="primary" type="submit" >Login</Button>
-                                {/* <Button variant="danger" type="button" value="_visitor" onClick={this.handleLogin}>Enter as visitor!</Button> */}
                             </div>
 
                         </Form>
@@ -119,8 +116,8 @@ class RegisterLogin extends React.Component {
                                 <Form.Control
                                     className="login-form-type"
                                     type="text"
-                                    value={this.state.register_nickname}
-                                    onChange={event => this.handleStateChange({ register_nickname: event.target.value })}
+                                    value={this.state.registerNickName}
+                                    onChange={event => this.handleStateChange({ registerNickName: event.target.value })}
                                 />
                             </Form.Group>
 
@@ -129,8 +126,8 @@ class RegisterLogin extends React.Component {
                                 <Form.Control
                                     className="login-form-type"
                                     type="email"
-                                    value={this.state.register_email}
-                                    onChange={event => this.handleStateChange({ register_email: event.target.value })}
+                                    value={this.state.registerEmail}
+                                    onChange={event => this.handleStateChange({ registerEmail: event.target.value })}
                                 />
                             </Form.Group>
 
@@ -140,8 +137,8 @@ class RegisterLogin extends React.Component {
                                     className="login-form-type"
                                     type="password"
                                     placeholder="At least 6 characters"
-                                    value={this.state.register_password}
-                                    onChange={event => this.handleStateChange({ register_password: event.target.value })}
+                                    value={this.state.registerPassword}
+                                    onChange={event => this.handleStateChange({ registerPassword: event.target.value })}
                                 />
                             </Form.Group>
 
@@ -150,18 +147,15 @@ class RegisterLogin extends React.Component {
                                 <Form.Control
                                     className="login-form-type"
                                     type="password"
-                                    value={this.state.register_confirmpassword}
-                                    onChange={event => this.handleStateChange({ register_confirmpassword: event.target.value })}
+                                    value={this.state.registerConfirmedPassword}
+                                    onChange={event => this.handleStateChange({ registerConfirmedPassword: event.target.value })}
                                 />
                             </Form.Group>
-                            <Alert variant="danger" className="errormessage" show={this.state.register_err ? true : false}>{this.state.register_err}</Alert>
+                            <Alert variant="danger" className="errormessage" show={this.state.registerErr ? true : false}>{this.state.registerErr}</Alert>
                             <Button className="register-submit" variant="primary" type="submit" block>Create account</Button>
                         </Form>
                     }
-
-
                 </Card>
-
             </div>
         );
     }

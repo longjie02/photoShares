@@ -21,14 +21,14 @@ var tagSchema = new mongoose.Schema({
 
 // create a schema for Photo
 var photoSchema = new mongoose.Schema({
-    file_name: String, // 	Name of a file containing the actual photo (in the directory project6/images).
-    creator_id: mongoose.Schema.Types.ObjectId, // The ID of the user who created the photo.
-    date_time: {type: Date, default: Date.now}, // 	The date and time when the photo was added to the database
+    fileName: String, // 	Name of a file containing the actual photo (in the directory project6/images).
+    creatorId: mongoose.Schema.Types.ObjectId, // The ID of the user who created the photo.
+    dateTime: {type: Date, default: Date.now}, // 	The date and time when the photo was added to the database
     description: String,
     comments: [commentSchema], // Array of comment objects representing the comments made on this photo.
     tags: [tagSchema],
-    liked_by: [mongoose.Schema.Types.ObjectId],
-    users_permitted: [mongoose.Schema.Types.ObjectId]
+    likedBy: [mongoose.Schema.Types.ObjectId],
+    // usersPermitted: [mongoose.Schema.Types.ObjectId]
 });
 
 // the schema is useless so far

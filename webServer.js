@@ -30,7 +30,7 @@ var app = express();
 function getUserModel(userDB, isSelf) {
   let userSend = {
     _id: userDB._id,
-    nickname: userDB.nickname,
+    nickName: userDB.nickName,
     description: userDB.description
   }
   if (isSelf) {
@@ -38,7 +38,7 @@ function getUserModel(userDB, isSelf) {
       ...userSend,
       favorites: userDB.favorites,
       metioned: userDB.metioned,
-      followList: userDB.followList
+      subs: userDB.subs
     }
   }
   return userSend;
@@ -51,6 +51,8 @@ async function getPhotoListModel(photosDB, request) {
   await async.each(photoListSend, async (photo) => {
     photo["is_like"] = photo['liked_by'].includes(request.session);
     photo["like_num"] = photo['liked_by'].length;
+    photo["photo_id"] = photo._id;
+    delete photo._id;
     delete photo.liked_by;
     delete photo.__v;
     let user = await User.findOne({ _id: photo.creator_id });
@@ -63,7 +65,7 @@ async function getPhotoListModel(photosDB, request) {
 // middleware: login check
 var loginCheck = (req, res, next) => {
   if (!req.session._id) {
-    res.status(400).send('Please log in.');
+    res.status(401).send('Please log in.');
     return;
   }
   next();
@@ -87,163 +89,163 @@ app.use(
 app.use(bodyParser.json());
 
 
-app.get("/", function (request, response) {
-  response.send("Simple web server of files from " + __dirname);
+app.get("/", function (req, res) {
+  res.send("Simple web server of files from " + __dirname);
 });
 
 // API: auto login
-app.get("/admin/current", function (request, response) {
-  let _id = request.session._id;
+app.get("/admin/current", function (req, res) {
+  let _id = req.session._id;
   if (!_id) {
     console.log("This is a new connection!");
-    response.status(200).send(undefined);
+    res.status(200).send();
     return;
   }
   User.findOne({ _id: _id }, (_, user) => {
     if (!user) {
-      console.log("id not exists.");
-      response.status(400).send("You have not registered.");
+      console.log("id does not exist.");
+      res.status(400).send("You have not registered.");
       return;
     }
     let userSend = getUserModel(user, true);
-    response.status(200).send(JSON.stringify(userSend));
+    res.status(200).send(JSON.stringify(userSend));
   });
 });
 
 // API: login
-app.post('/admin/login', async (request, response) => {
+app.post('/admin/login', async (req, res) => {
   try {
-    let user = await User.findOne({ email: request.body.email });
+    let user = await User.findOne({ email: req.body.loginEmail });
     if (!user) {
-      response.status(400).send('This account has not been created.');
+      res.status(400).send('This account has not been created.');
       return;
     }
-    if (user.password !== request.body.password) {
-      response.status(400).send('your password not matches email address');
+    if (user.password !== req.body.loginPassword) {
+      response.status(400).send('your password not matches the email.');
       return;
     }
-    request.session._id = user._id;
+    req.session._id = user._id;
     let userSend = getUserModel(user, true);
-    response.status(200).send(JSON.stringify(userSend));
+    res.status(200).send(JSON.stringify(userSend));
   } catch (err) {
     console.log(err);
   }
 });
 /** API: process register request */
-app.post('/admin/register', async (request, response) => {
+app.post('/admin/register', async (req, res) => {
   let {
-    nickname,
-    email,
-    password
-  } = request.body;
+    registerNickName,
+    registerEmail,
+    registerPassword
+  } = req.body;
   /* nickname validation */
-  if (nickname.length < 3) {
-    response.status(400).send("The nickname should be at least 3 characters.");
+  if (registerNickName.length < 3) {
+    res.status(400).send("The nickname should be at least 3 characters.");
     return;
   }
 
   /* password validation */
-  if (password.length === 0) {
-    response.status(400).send("Password cannot be empty.");
+  if (registerPassword.length === 0) {
+    res.status(400).send("Password cannot be empty.");
     return;
   }
 
   /* email validation */
-  let email_pattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-  if (!email_pattern.test(email)) {
-    response.status(400).send("The email address is invalid, please try again.");
+  let emailPattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+  if (!emailPattern.test(registerEmail)) {
+    res.status(400).send("The email address is invalid, please try again.");
     return;
   }
 
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email: registerEmail });
     if (user) {
-      response.status(400).send("This email address has existed.");
+      res.status(400).send("This email address has existed.");
       return;
     }
 
     let newUser = await User.create({
-      nickname,
-      email,
-      password
+      nickName: registerNickName,
+      email: registerEmail,
+      password: registerPassword
     });
 
-    request.session._id = newUser._id;
-    console.log("session: _id = " + request.session._id);
+    req.session._id = newUser._id;
+    console.log("session: _id = " + req.session._id);
 
-    response.status(200).send(JSON.stringify(newUser));
+    res.status(200).send(JSON.stringify(newUser));
 
   } catch (err) {
     console.log(err);
-    response.status(500).send("account cannot be created");
+    res.status(500).send("account cannot be created");
   }
 });
 
 // API: logout
-app.post("/admin/logout", (request, response) => {
-  request.session.destroy(function (err) {
+app.post("/admin/logout", (req, res) => {
+  req.session.destroy(function (err) {
     if (err) {
       console.log(err);
-      response.status(400).send("sorry! unable to logout");
+      res.status(400).send("sorry! unable to logout");
       return;
     }
-    response.status(200).send();
+    res.status(200).send();
   });
 });
 
 // API: save photo to /images/; update db
-app.post("/photos/new", loginCheck, uploadHelper, async (request, response) => {
+app.post("/photos/new", loginCheck, uploadHelper, async (req, res) => {
   try {
     let newPhoto = {
-      file_name: request.file.filename,
-      creator_id: request.session._id,
-      description: request.body.description
+      fileName: req.file.fileName,
+      creatorId: req.session._id,
+      description: req.body.description
     };
     await Photo.create(newPhoto);
-    response.status(200).send("sucessful upload.");
-  } catch (e) {
-    console.log(e);
-    response.status(500).send("Unknown error.");
+    res.status(200).send("sucessful upload.");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("upload failed.");
   }
 })
 
 // API: get user info (not your own info)
-app.get("/user/:id", loginCheck, async (request, response) => {
-  let id = request.params.id;
+app.get("/user/:_id", loginCheck, async (req, res) => {
+  let _id = request.params._id;
   try {
-    let user = await User.findOne({ _id: id });
+    let user = await User.findOne({ _id: _id });
     let userSend = getUserModel(user, false);
     response.status(200).send(JSON.stringify(userSend));
-  } catch (e) {
-    console.log(e);
-    response.status(500).send("Unknown error.");
+  } catch (err) {
+    console.log(err);
+    response.status(500).send("cannot get this user's info.");
   }
 });
 
 // API: get photoList of an user
-app.get("/photoList/:id", loginCheck, async (request, response) => {
-  let id = request.params.id;
+app.get("/photoList/:_id", loginCheck, async (req, res) => {
+  let _id = request.params._id;
   try {
-    let photoList = await Photo.find({ creator_id: id });
-    let photoListSend = await getPhotoListModel(photoList, request);
-    response.status(200).send(JSON.stringify(photoListSend));
-  } catch (e) {
-    console.log(e);
-    response.status(500).send("Unknown error.");
+    let photos = await Photo.find({ creator_id: _id });
+    let photosSend = await getPhotoListModel(photos, req);
+    res.status(200).send(JSON.stringify(photosSend));
+  } catch (err) {
+    console.log(err);
+    response.status(500).send("cannot find photos of this user.");
   }
 });
 
 // API: add to favorites list
-app.post('/addToFavorites', loginCheck, function (request, response) {
-  let user_id = request.session._id;
-  let photo_id = request.body.photoId;
-  User.findOne({ _id: user_id }, function (err, user) {
+app.post('/addToFavorites', loginCheck, function (req, res) {
+  let _id = request.session._id;
+  let photoId = request.body.photoId;
+  User.findOne({ _id: _id }, function (err, user) {
     if (err) {
       response.status(400).send("user id is invalid.");
       return;
     }
-    if (!user.favorites.includes(photo_id)) {
-      user.favorites.push(photo_id);
+    if (!user.favorites.includes(photoId)) {
+      user.favorites.push(photoId);
       user.save();
     }
     response.status(200).send();
@@ -251,38 +253,37 @@ app.post('/addToFavorites', loginCheck, function (request, response) {
 });
 
 // API: get Favorites List
-app.get(`/getFavorites`, loginCheck, async (request, response) => {
-  let user_id = request.session._id;
+app.get('/getFavorites', loginCheck, async (req, res) => {
+  let _id = request.session._id;
   try {
-    let user = await User.findOne({ _id: user_id });
+    let user = await User.findOne({ _id: _id });
     let favorites = user.favorites;
     let favoritesSend = [];
-    await async.each(favorites, async (photo_id) => {
-      let photo = await Photo.findOne({ _id: photo_id });
+    await async.each(favorites, async (photoId) => {
+      let photo = await Photo.findOne({ _id: photoId });
       favoritesSend.push({
-        file_name: photo.file_name,
-        date_time: photo.date_time,
-        _id: photo._id
+        fileName: photo.fileName,
+        dateTime: photo.dateTime,
+        photoId: photo._id
       });
     })
-    console.log(favoritesSend);
-    response.status(200).send(JSON.stringify(favoritesSend));
-  } catch (e) {
-    response.status(400).send('user id is invalid.');
+    res.status(200).send(JSON.stringify(favoritesSend));
+  } catch (err) {
+    res.status(400).send('user id is invalid.');
   }
 });
 
 // API: delete favorite item
-app.delete("/deleteFavorite/:photo_id", loginCheck, async (request, response) => {
-  let photo_id = request.params.photo_id;
-  let user_id = request.session._id;
+app.delete("/deleteFavorite/:photoId", loginCheck, async (req, res) => {
+  let photoId = request.params.photoId;
+  let _id = request.session._id;
   try {
-    let user = await User.findOne({ _id: user_id });
-    let photo_idx = user.favorites.indexOf(photo_id);
-    user.favorites.splice(photo_idx, 1);
+    let user = await User.findOne({ _id: _id });
+    let photoIdx = user.favorites.indexOf(photoId);
+    user.favorites.splice(photoIdx, 1);
     user.save();
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    console.log(err);
     response.status(500).send("DB error, cannot delete photo");
   }
 
@@ -290,27 +291,59 @@ app.delete("/deleteFavorite/:photo_id", loginCheck, async (request, response) =>
 });
 
 // API: toggleLikeOrUnlike
-app.post(`/toggleLike/:photo_id`, loginCheck, async (request, response) => {
-  let photo_id = request.params.photo_id;
-  let user_id = request.session._id;
-  Photo.findOne({ _id: photo_id }, function (err, photo) {
+app.post('/toggleLike/:photoId', loginCheck, async (req, res) => {
+  let photoId = request.params.photoId;
+  let _id = request.session._id;
+  Photo.findOne({ _id: _id }, function (err, photo) {
     if (err) {
       response.status(400).send("invalid photo id.");
       return;
     }
 
-    let userIdx = photo.liked_by.indexOf(user_id);
+    let userIdx = photo.likedBy.indexOf(_id);
     // only when user did effective actions, it's necessary to update db 
-    if (request.body.like && userIdx < 0) {
-      photo.liked_by.push(user_id);
+    if (req.body.like && userIdx < 0) {
+      photo.likedBy.push(_id);
       photo.save();
     }
-    if (!request.body.like && userIdx >= 0) {
-      photo.liked_by.splice(userIdx, 1);
+    if (!req.body.like && userIdx >= 0) {
+      photo.likedBy.splice(userIdx, 1);
       photo.save();
     }
     response.status(200).send();
   });
+});
+
+// API: get subscribes list
+// test: return all users as subscribes 
+app.get('/subscribes', loginCheck, async (req, res) => {
+  try {
+    let users = await User.find({});
+    let subsSend = [];
+    users.forEach((user, idx) => {
+      subsSend[idx] = getUserModel(user, false);
+    })
+    res.status(200).send(JSON.stringify(subsSend));
+  } catch (e) {
+    status.status(500).send();
+  }
+});
+
+// API: get comments of a photo
+app.get('/comments/:photoId', loginCheck, async (req, res) => {
+  let photoId = req.params.photoId;
+  try {
+    let photo = await Photo.findOne({_id: photoId});
+    let commentsSend = JSON.parse(JSON.stringify(photo.comments));
+    await async.each(commentsSend, async (comment) => {
+      let user = await User.findOne({_id: comment.creatorId});
+      comment.nickName = user.nickName;
+    });
+    res.status(200).send(JSON.stringify(commentsSend));
+  } catch (err) {
+    console.log("get comments DB error.")
+    res.status(500).send();
+  }
 });
 
 var server = app.listen(3000, function () {
