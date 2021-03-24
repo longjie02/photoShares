@@ -14,7 +14,7 @@ class ThumbnailImg extends React.Component {
 
     handleDeletePhoto = (event) => {
         // event.preventDefault();
-        axios.delete(`/deleteFavorite/${this.props._id}`)
+        axios.delete(`/deleteFavorite/${this.props.photoId}`)
             .then(() => {
                 // this.setState({ show: false });
                 this.props.refreshCards();
@@ -28,11 +28,11 @@ class ThumbnailImg extends React.Component {
                 <Toast onClose={this.handleDeletePhoto}>
                     <Toast.Header>
                         <div className='mr-auto'>
-                            {new Date(this.props.date_time).toDateString()}
+                            {new Date(this.props.dateTime).toDateString()}
                         </div>
                     </Toast.Header>
                     {/* <Toast.Body> */}
-                    <Image thumbnail src={`/images/${this.props.file_name}`} onClick={() => this.handleShowModal(true)}/>
+                    <Image thumbnail src={`/images/${this.props.fileName}`} onClick={() => this.handleShowModal(true)}/>
                     {/* </Toast.Body> */}
                 </Toast>
                 <Modal
@@ -44,7 +44,7 @@ class ThumbnailImg extends React.Component {
                     <Modal.Header closeButton>
                     </Modal.Header>
                     <Modal.Body>
-                        <Image fluid src={`/images/${this.props.file_name}`} />
+                        <Image fluid src={`/images/${this.props.fileName}`} />
                     </Modal.Body>
                 </Modal>
             </React.Fragment>

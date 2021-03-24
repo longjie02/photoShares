@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Card, Button, ButtonGroup } from "react-bootstrap";
 import { } from "react-bootstrap-icons";
 import Comments from "./Comments";
@@ -46,7 +46,7 @@ class PhotoCard extends React.Component {
     }
 
     toggleComments = () => {
-        this.setState({showComments: !this.state.showComments});
+        this.setState({ showComments: !this.state.showComments });
     }
 
     render() {
@@ -69,7 +69,10 @@ class PhotoCard extends React.Component {
                         {this.props.description}
                     </Card.Text>
                 </Card.Body>
-                {this.state.showComments && <Comments photoId={this.props.photoId}/> }
+                <Card.Footer>
+                    {this.state.showComments && <Comments photoId={this.props.photoId} />}
+                </Card.Footer>
+
             </Card>
         );
     }

@@ -15,8 +15,8 @@ class Favorites extends React.Component {
     refreshCards = () => {
         axios
             .get(`/getFavorites`)
-            .then(response => {
-                this.setState({ favorites: response.data });
+            .then(res => {
+                this.setState({ favorites: res.data });
                 console.log("got favorite photoList.");
             })
             .catch(() => this.setState({ favorites: [] }));
