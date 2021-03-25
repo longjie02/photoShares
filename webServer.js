@@ -37,7 +37,7 @@ function getUserModel(userDB, isSelf) {
     userSend = {
       ...userSend,
       favorites: userDB.favorites,
-      metioned: userDB.metioned,
+      mentioned: userDB.mentioned,
       subs: userDB.subs
     }
   }
@@ -209,12 +209,21 @@ app.post("/photos/new", loginCheck, uploadHelper, async (req, res) => {
   }
 })
 
-// API: get user info (not your own info)
+// API: get user info 
 app.get("/user/:_id", loginCheck, async (req, res) => {
   let _id = req.params._id;
   try {
     let user = await User.findOne({ _id: _id });
-    let userSend = getUserModel(user, false);
+    let userSend = getUserModel(user, (req.session._id === _id ? true : false));
+    if (req.session._id !== _id) {
+      if (user.subs.includes(_id)) {
+        userSend.isSubscribed = 2; // subscribed
+      } else {
+        userSend.isSubscribed = 1; // unsubscribed
+      }
+    } else {
+      userSend.isSelf = true; // is your user info
+    }
     res.status(200).send(JSON.stringify(userSend));
   } catch (err) {
     console.log(err);
@@ -352,28 +361,26 @@ app.post('/addComment/:photoId', loginCheck, async (req, res) => {
   let _id = req.session._id;
   let text = req.body.newComment;
   let mentionsToAdd = req.body.mentionsToAdd || [];
-  
 
   // add new comment text into the target photo
   try {
     let photo = await Photo.findOne({ _id: photoId });
     photo.comments.push({ text, creatorId: _id });
     photo.save();
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("adding new comment failed.");
-  }
 
-  // add user's id to those mentioned people
-  try {
     await async.each(mentionsToAdd, async (mention) => {
       let user = await User.findOne({ _id: mention });
-      user.mentioned.push(photoId);
+      user.mentioned.push({
+        photoId,
+        text,
+        nickName: user.nickName,
+        fileName: photo.fileName
+      });
       await user.save();
     });
-  } catch (err) {
+    } catch (err) {
     console.log(err);
-    res.status(500).send("adding mentions failed.");
+    res.status(500).send("adding new comment failed.");
   }
 
   res.status(200).send();

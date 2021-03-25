@@ -10,12 +10,18 @@ var userSchema = new mongoose.Schema({
     nickName: String,
     email: String,
     password: String,
-     
-    description: String,  
+
+    description: String,
     // login_name: String,  
     // password: String,
     // occupation: String,    // Occupation of the user.
-    mentioned: [mongoose.Schema.Types.ObjectId], //array of photo ids 
+    mentioned: [{
+        photoId: mongoose.Schema.Types.ObjectId,
+        dateTime: {type: Date, default: Date.now},
+        nickName: String,
+        text: String,
+        fileName: String
+    }], //array of photo ids 
     favorites: [mongoose.Schema.Types.ObjectId], //array of photo ids
     subs: [mongoose.Schema.Types.ObjectId] // array of user ids
 });

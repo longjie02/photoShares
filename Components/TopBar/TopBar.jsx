@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navbar, NavDropdown, Nav, FormControl, Button, Modal, FormLabel, FormGroup, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import axios from 'axios';
 import './TopBar.css';
 
@@ -93,6 +94,7 @@ class TopBar extends React.Component {
                     </Nav.Item>
                 </Nav>
                 <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+                    <Nav.Link href={`#/profile/${this.props.user._id}`}>My Profile</Nav.Link>
                     <NavDropdown.Divider />
                     <NavDropdown.Item id="topbar-logout" onClick={this.handleLogout}>Log out</NavDropdown.Item>
                 </NavDropdown>

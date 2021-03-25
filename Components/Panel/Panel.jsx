@@ -6,6 +6,7 @@ import TopBar from "../TopBar/TopBar";
 import PhotoList from "../Photos/PhotoList";
 import Favorites from "../Favorites/Favorites";
 import Subscribes from "./Subscribes";
+import Profile from "../Profile/Profile";
 import './Panel.css';
 
 class Panel extends React.Component {
@@ -30,7 +31,7 @@ class Panel extends React.Component {
                             <Route exact path="/square" render={() => <h1>Square</h1>} />
                             <Route path="/photos/:creatorId" render={props => <PhotoList {...props} key={new Date()} />} />
                             <Route exact path="/favorites" component={Favorites} />
-                            <Route path="/users/:userId/profile" render={() => <h1>profile</h1>} />
+                            <Route path="/profile/:_id" render={(props) => <Profile {...props}/>} />
                             <Redirect to='/square' />
                         </Switch>
                     </Col>
