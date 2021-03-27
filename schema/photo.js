@@ -26,14 +26,10 @@ var photoSchema = new mongoose.Schema({
     dateTime: {type: Date, default: Date.now}, // 	The date and time when the photo was added to the database
     description: String,
     comments: [commentSchema], // Array of comment objects representing the comments made on this photo.
-    tags: [tagSchema],
     likedBy: [mongoose.Schema.Types.ObjectId],
     // usersPermitted: [mongoose.Schema.Types.ObjectId]
 });
 
-// the schema is useless so far
-// we need to create a model using it
 var Photo = mongoose.model('Photo', photoSchema);
 
-// make this available to our photos in our Node applications
 module.exports = Photo;

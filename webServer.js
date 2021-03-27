@@ -18,6 +18,7 @@ var mongoose = require("mongoose");
 mongoose.Promise = require('bluebird');
 var User = require("./schema/user.js");
 var Photo = require("./schema/photo");
+var Tag = require("./schema/tag.js");
 
 const session = require("express-session");
 var MongoStore = require('connect-mongo')(session);
@@ -270,10 +271,19 @@ app.get('/getFavorites', loginCheck, async (req, res) => {
     let favoritesSend = [];
     await async.each(favorites, async (photoId) => {
       let photo = await Photo.findOne({ _id: photoId });
+      let tags;
+      try {
+        tags = await Tag.find({creatorId: _id, photoId});
+      } catch (err) {
+        console.log("this photo has no tags.");
+        tags = [];
+      }
+      
       favoritesSend.push({
         fileName: photo.fileName,
         dateTime: photo.dateTime,
-        photoId: photo._id
+        photoId: photo._id,
+        tags
       });
     })
     res.status(200).send(JSON.stringify(favoritesSend));
@@ -378,12 +388,24 @@ app.post('/addComment/:photoId', loginCheck, async (req, res) => {
       });
       await user.save();
     });
-    } catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(500).send("adding new comment failed.");
   }
 
   res.status(200).send();
+})
+
+app.post('/addTag', loginCheck, async (req, res) => {
+  let tagAdd = req.body;
+  tagAdd.creatorId = req.session._id;
+  try {
+    await Tag.create(tagAdd);
+    res.status(200).send();
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("cannot add tag.");
+  }
 })
 
 var server = app.listen(3000, function () {

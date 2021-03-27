@@ -32,7 +32,7 @@ class Favorites extends React.Component {
                 <Row><Col xs={{ offset: 11 }}><Button variant='danger'>DELETE</Button></Col></Row>
                 <Row>
                     {this.state.favorites.map(photo =>
-                        <Col xs={12} sm={6} md={4} lg={3} key={photo._id}>
+                        <Col xs={12} sm={6} md={4} lg={3} key={photo.photoId}>
                             <ThumbnailImg refreshCards={this.refreshCards} {...photo} />
                         </Col>
                     )}

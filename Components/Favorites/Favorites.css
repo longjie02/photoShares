@@ -1,0 +1,11 @@
+.favorites-tag-input{
+    width: 200px;
+    position: absolute;
+    z-index: 1;
+}
+
+.favorites-tag {
+    border: 2px solid blue;
+    position: absolute;
+
+}
