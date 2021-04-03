@@ -1,0 +1,11 @@
+.photocard-img {
+    max-height: 15rem;
+    max-width:30rem;
+    display: block;
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.photocard {
+    margin-bottom: 2rem;
+}

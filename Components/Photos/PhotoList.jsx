@@ -1,6 +1,7 @@
 import React from "react";
 import PhotoCard from "./PhotoCard";
 import axios from "axios";
+import './PhotoList.css';
 
 class PhotoList extends React.Component {
     constructor(props) {
@@ -39,15 +40,15 @@ class PhotoList extends React.Component {
 
     render() {
         return (
-            <div>
-                <h1>photoList works.</h1>
-                <ul>
-                    {this.state.photos.map(photo =>
-                        <PhotoCard refreshPhotoList={this.refreshPhotoList}
-                            isFavorite={this.state.favoriteIds.includes(photo.photoId)}
-                            {...photo} key={photo.photoId} />)}
-                </ul>
-            </div>
+            this.state.photos.length > 0 ? 
+            <ul>
+                {this.state.photos.map(photo =>
+                    <PhotoCard refreshPhotoList={this.refreshPhotoList}
+                        isFavorite={this.state.favoriteIds.includes(photo.photoId)}
+                        {...photo} key={photo.photoId} />)}
+            </ul>
+            :
+            <div> You don't have any photo yet.</div>
         );
     }
 }

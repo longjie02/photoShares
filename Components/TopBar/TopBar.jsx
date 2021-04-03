@@ -82,7 +82,7 @@ class TopBar extends React.Component {
                         className="d-inline-block align-top"
                     />
                 </Navbar.Brand>
-                <Nav defaultActiveKey="#/square" variant="pills" className="mr-auto">
+                <Nav defaultActiveKey="#/square" className="mr-auto">
                     <Nav.Item>
                         <Nav.Link href={`#/square`}>Square</Nav.Link>
                     </Nav.Item>
@@ -98,16 +98,13 @@ class TopBar extends React.Component {
                     <NavDropdown.Divider />
                     <NavDropdown.Item id="topbar-logout" onClick={this.handleLogout}>Log out</NavDropdown.Item>
                 </NavDropdown>
-                <Button onClick={(e) => this.setShowUploadDiaglog(true, e)}>upload photo</Button>
+                <Button onClick={(e) => this.setShowUploadDiaglog(true, e)}>upload</Button>
                 <Modal
                     size="lg"
                     show={this.state.showUploadDialog}
                     onHide={(e) => this.setShowUploadDiaglog(false, e)}
                 >
                     <Modal.Header closeButton >
-                        {/* <Modal.Title id="example-modal-sizes-title-lg">
-                                Share your story
-                            </Modal.Title> */}
                     </Modal.Header>
                     <Modal.Body>
                         <div id="topbar-upload-previewholder">

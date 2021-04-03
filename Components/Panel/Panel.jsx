@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { Container, Col, Row, Nav } from 'react-bootstrap';
+import { Container, Col, Row } from 'react-bootstrap';
 
 import TopBar from "../TopBar/TopBar";
 import PhotoList from "../Photos/PhotoList";
@@ -22,11 +22,11 @@ class Panel extends React.Component {
                         <TopBar changeUser={this.props.changeUser} user={this.props.user} />
                     </Col>
                 </Row>
-                <Row className="justify-content-between" style={{ background: 'blue' }}>
-                    <Col xs={1} style={{ background: 'yellow' }}>
+                <Row className="justify-content-between" >
+                    <Col xs={1} >
                         <Subscribes />
                     </Col>
-                    <Col xs={7}>
+                    <Col xs={5}>
                         <Switch>
                             <Route exact path="/square" render={() => <h1>Square</h1>} />
                             <Route path="/photos/:creatorId" render={props => <PhotoList {...props} key={new Date()} />} />
@@ -35,8 +35,8 @@ class Panel extends React.Component {
                             <Redirect to='/square' />
                         </Switch>
                     </Col>
-                    <Col xs={1} style={{ background: 'yellow' }}>
-                        <h1>text</h1>
+                    <Col xs={1} >
+                        <div />
                     </Col>
                 </Row>
             </Container>
