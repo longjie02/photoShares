@@ -7,5 +7,11 @@
 }
 
 .photocard {
-    margin-bottom: 2rem;
+    margin-top: 3rem;
+}
+
+.description-text {
+    font-family: "Trirong", serif;
+    font-size: 1.875em;
+    font-weight: lighter;
 }

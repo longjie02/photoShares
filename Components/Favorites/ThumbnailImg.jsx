@@ -107,11 +107,9 @@ class ThumbnailImg extends React.Component {
                             onChange={(crop, percentCrop) =>
                                 this.handleDragging(crop, percentCrop)
                             }
-                            onDragEnd={this.endDrag}
-                            onDragStart={this.startDrag}
                             crop={this.state.cropParams}
                         >
-                            {this.state.showTags && this.props.tags.map(tag =>
+                            {this.props.tags.map(tag =>
                                 <OverlayTrigger key={tag._id} placement='top'
                                     overlay={
                                         <Tooltip id={`toottip-${tag._id}`}>

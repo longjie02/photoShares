@@ -1,8 +1,11 @@
 import React from 'react';
-import { Navbar, NavDropdown, Nav, FormControl, Button, Modal, FormLabel, FormGroup, Alert } from "react-bootstrap";
+// import { Navbar, NavDropdown, Nav, FormControl, Button, Modal, FormLabel, FormGroup, Alert, } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import './TopBar.css';
+import { AppBar, ButtonBase, Toolbar, Link as Link2, IconButton, Badge, Button, Drawer, Menu, MenuItem } from '@material-ui/core';
+import { AccountCircle } from '@material-ui/icons';
+import { Modal, FormGroup, FormLabel, FormControl, Alert } from "react-bootstrap";
 
 class TopBar extends React.Component {
     constructor(props) {
@@ -10,7 +13,9 @@ class TopBar extends React.Component {
         this.state = {
             showUploadDialog: false,
             uploadErr: '',
-            uploadPhotoDescription: ""
+            uploadPhotoDescription: "",
+            showSubscribes: false,
+            anchorProfile: null,
         }
     }
 
@@ -70,9 +75,115 @@ class TopBar extends React.Component {
         reader.readAsDataURL(fileInput.files[0]);
     }
 
+    toggleSubscribes = () => {
+        this.setState({ showSubscribes: !this.state.showSubscribes });
+    }
+
+    handleProfileOpen = (event) => {
+        this.setState({ anchorProfile: event.currentTarget});
+    }
+
+    handleProfileClose = () => {
+        this.setState({ anchorProfile: null});
+    }
+
     render() {
         return (
-            <Navbar bg="dark" variant="dark" fixed='top'>
+            <div className='topbar-holder'>
+                <AppBar position="static">
+                    <Toolbar>
+                        <div style={{ marginRight: 'auto' }}>
+                            <ButtonBase href="#/square">
+                                <img
+                                    alt="logo"
+                                    src="favicon.ico"
+                                    width="30"
+                                    height="30"
+                                    style={{ marginRight: '1rem' }}
+                                />
+                            </ButtonBase>
+                            <Button color='inherit' href="#/square" className='topbar-menubutton'>Square</Button>
+                            <Button color='inherit' href={`#/photos/${this.props.user._id}`} className='topbar-menubutton'>My Photos</Button>
+                            <Button color='inherit' href={`#/favorites`} className='topbar-menubutton'>Favorites</Button>
+                            <Button color='inherit' className='topbar-menubutton' onClick={this.toggleSubscribes}>Subscribes</Button>
+                        </div>
+                        <div>
+                            <Button color='secondary' onClick={(e) => this.setShowUploadDiaglog(true, e)}>upload</Button>
+                            <IconButton color='inherit' onClick={this.handleProfileOpen}>
+                                <Badge badgeContent={5} color='secondary'>
+                                    <AccountCircle />
+                                </Badge>
+                            </IconButton>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+                <Modal
+                    size="lg"
+                    show={this.state.showUploadDialog}
+                    onHide={(e) => this.setShowUploadDiaglog(false, e)}
+                >
+                    <Modal.Header closeButton >
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div id="topbar-upload-previewholder">
+                            <img id="topbar-upload-preview" />
+                        </div>
+                        <form
+                            id="topbar-upload-form"
+                            onSubmit={this.handleUploadSubmit}>
+                            <FormGroup>
+                                <FormLabel>Description:</FormLabel>
+                                <FormControl
+                                    as="textarea"
+                                    row="4"
+                                    value={this.state.uploadPhotoDescription}
+                                    onChange={event => this.setState({ uploadPhotoDescription: event.target.value })}
+                                />
+                            </FormGroup>
+                            <Alert variant="danger" className="errormessage" show={this.state.uploadErr ? true : false}>{this.state.uploadErr}</Alert>
+                            <div className="topbar-upload-submitwrapper">
+                                <FormLabel>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        id="topbar-upload-form-input"
+                                        onChange={this.handleShowPreview}
+                                        ref={domFileRef => {
+                                            this.uploadInput = domFileRef;
+                                        }}
+                                    />
+                                </FormLabel>
+                                <Button color="primary" type="submit">Post</Button>
+                            </div>
+                        </form>
+                    </Modal.Body>
+                </Modal>
+                <Drawer
+                    variant='persistent'
+                    ancor='left'
+                    open={this.state.showSubscribes}
+                >
+                    <h1>test</h1>
+                </Drawer>
+                <Menu
+                anchorEl={this.state.anchorProfile}
+                // anchorOrigin={{vertical:'bottom', horizontal:'right'}}
+                keepMounted
+                open={Boolean(this.state.anchorProfile)}
+                onClose={this.handleProfileClose}
+                >
+                    <MenuItem><Link2 href={`#/profile/${this.props.user._id}`}>My Profile </Link2></MenuItem>
+                    <MenuItem onClick={this.handleLogout}>Log out</MenuItem>
+                </Menu>
+            </div>
+
+        );
+    }
+}
+
+module.exports = TopBar;
+
+{/* <Navbar bg="dark" variant="dark" fixed='top'>
                 <Navbar.Brand href="#/square">
                     <img
                         alt="logo"
@@ -140,9 +251,4 @@ class TopBar extends React.Component {
                         </form>
                     </Modal.Body>
                 </Modal>
-            </Navbar >
-        );
-    }
-}
-
-module.exports = TopBar;
+            </Navbar > */}

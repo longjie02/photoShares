@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 // import { Card, Button, ButtonGroup, Row, Col, Container } from "react-bootstrap";
-import { Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, IconButton } from '@material-ui/core';
+import { Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, IconButton, Typography } from '@material-ui/core';
 import Comments from "./Comments";
 import { CommentOutlined, Favorite, FavoriteBorder, ThumbUp, ThumbUpAltOutlined } from "@material-ui/icons";
 
@@ -19,7 +19,7 @@ function LikeButton(props) {
     };
     return (
         <IconButton onClick={handleToggleLike}>
-            {isLike ? <ThumbUp /> : <ThumbUpAltOutlined />}
+            {isLike ? <ThumbUp color='primary' /> : <ThumbUpAltOutlined color='primary' />}
             {props.countLike}
         </IconButton>
     );
@@ -36,7 +36,7 @@ function FavoriteButton(props) {
     }
     return (
         <IconButton disabled={props.isFavorite} onClick={handleAddFavorite}>
-            {props.isFavorite ? <Favorite /> : <FavoriteBorder />}
+            {props.isFavorite ? <Favorite color='secondary' /> : <FavoriteBorder color='secondary' />}
         </IconButton>
     );
 }
@@ -58,21 +58,22 @@ class PhotoCard extends React.Component {
             <Card className="photocard">
                 <CardHeader title={this.props.creator.nickName} />
                 <CardMedia >
-                    <img src={`/images/${this.props.fileName}`} className='photocard-img'/>
+                    <img src={`/images/${this.props.fileName}`} className='photocard-img' />
                 </CardMedia>
-
-            
-                <CardContent variant="body2" color="textSecondary" component="p">
+                <Typography variant='caption' align='center'>
                     {this.props.description}
-                </CardContent>
+                </Typography>
+
                 <CardActions disableSpacing>
-                    <LikeButton isLike={this.props.isLike}
-                        countLike={this.props.countLike} photoId={this.props.photoId}
-                        refreshPhotoList={this.props.refreshPhotoList}
-                    />
-                    <FavoriteButton isFavorite={this.props.isFavorite} photoId={this.props.photoId}
-                        refreshPhotoList={this.props.refreshPhotoList}
-                    />
+                    <div style={{ marginRight: 'auto' }}>
+                        <LikeButton isLike={this.props.isLike}
+                            countLike={this.props.countLike} photoId={this.props.photoId}
+                            refreshPhotoList={this.props.refreshPhotoList}
+                        />
+                        <FavoriteButton isFavorite={this.props.isFavorite} photoId={this.props.photoId}
+                            refreshPhotoList={this.props.refreshPhotoList}
+                        />
+                    </div>
                     <IconButton onClick={this.toggleComments}>
                         <CommentOutlined />
                     </IconButton>

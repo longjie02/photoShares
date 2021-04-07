@@ -19,3 +19,11 @@
     max-width: 35rem;
 }
 
+.topbar-menubutton {
+    padding-right: 1rem;
+    display: inline-block;
+}
+
+.topbar-holder {
+    flex-grow: 1;
+}

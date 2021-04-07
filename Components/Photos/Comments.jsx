@@ -5,7 +5,7 @@ import { ListGroup, Form, InputGroup, Button, Row, Col } from "react-bootstrap";
 import { MentionsInput, Mention } from "react-mentions";
 import mentionStyle from "./mentionStyle";
 
-const mentionRegex = /@\[(\S+ \S+)( )*\]\(\S+\)/g;
+const mentionRegex = /@\[(\S+)\]\(\w+\)/g;
 
 class Comments extends React.Component {
     constructor(props) {
@@ -69,45 +69,48 @@ class Comments extends React.Component {
     render() {
         return (
             <ListGroup className="list-unstyled">
-                    {this.state.comments.map(comment =>
-                        <ListGroup.Item key={comment._id} >
-                            <Media>
-                                <Media.Body>
-                                    <h5>{comment.nickName}</h5>
-                                    <p>
-                                        {comment.text}
-                                    </p>
-                                </Media.Body>
-                            </Media>
-                        </ListGroup.Item>
-                    )}
-                        <Form onSubmit={event => this.handleCommentSubmit(event)} className="mt-2">
-                            <Form.Row>
-                                <Col xs={10}>
-                                    <MentionsInput
-                                        value={this.state.newComment}
-                                        onChange={this.handleCommentChange}
-                                        allowSuggestionsAboveCursor
-                                        style={mentionStyle}
-                                    // singleLine
-                                    >
-                                        <Mention
-                                            trigger="@"
-                                            data={this.state.subs}
-                                            displayTransform={(id, display) => `@${display}`}
-                                            onAdd={(id) => {
-                                                let mentions = this.state.mentionsToAdd;
-                                                mentions.push(id);
-                                                this.setState({ mentionsToAdd: mentions });
-                                            }}
-                                        />
-                                    </MentionsInput>
-                                </Col>
-                                <Col xs={2}>
-                                    <Button variant="outline-secondary" type='submit'>Post</Button>
-                                </Col>
-                            </Form.Row>
-                        </Form>
+                {this.state.comments.map(comment =>
+                    <ListGroup.Item key={comment._id} >
+                        <Media>
+                            <Media.Body>
+                                <h5>{comment.nickName}</h5>
+                                <p>
+                                    {comment.text.replace(
+                                        mentionRegex,
+                                        (_, g1) => `@${g1}`
+                                    )}
+                                </p>
+                            </Media.Body>
+                        </Media>
+                    </ListGroup.Item>
+                )}
+                <Form onSubmit={event => this.handleCommentSubmit(event)} className="mt-2">
+                    <Form.Row>
+                        <Col xs={10}>
+                            <MentionsInput
+                                value={this.state.newComment}
+                                onChange={this.handleCommentChange}
+                                allowSuggestionsAboveCursor
+                                style={mentionStyle}
+                            // singleLine
+                            >
+                                <Mention
+                                    trigger="@"
+                                    data={this.state.subs}
+                                    displayTransform={(id, display) => `@${display}`}
+                                    onAdd={(id) => {
+                                        let mentions = this.state.mentionsToAdd;
+                                        mentions.push(id);
+                                        this.setState({ mentionsToAdd: mentions });
+                                    }}
+                                />
+                            </MentionsInput>
+                        </Col>
+                        <Col xs={2}>
+                            <Button variant="outline-secondary" type='submit'>Post</Button>
+                        </Col>
+                    </Form.Row>
+                </Form>
             </ListGroup>
         );
     }

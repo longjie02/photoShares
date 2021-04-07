@@ -5,7 +5,9 @@
 }
 
 .favorites-tag {
-    border: 2px solid blue;
     position: absolute;
+}
 
+.favorites-tag:hover {
+    border: 2px solid blue;
 }
